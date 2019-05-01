@@ -452,6 +452,6 @@ def __animateTrajectories(robotsTrajectory, loopIndex, safetyLimit, workspace):
 
 if __name__ == "__main__":
     np.random.seed(0)
-    motionPlanning_test2()
+    motionPlanning_test1()
 
 
