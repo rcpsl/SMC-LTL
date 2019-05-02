@@ -38,17 +38,13 @@
 #  */
 
 import os
-
 dir_path = os.path.dirname(os.path.realpath(__file__))
 from solver import SMConvexSolver
-
 import timeit
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
 import matplotlib.patches as patches
-
 import numpy as np
-
 
 # TODO: Fix the PREFIX based counterexample
 
@@ -79,6 +75,7 @@ class MultiRobotMotionPlanner:
         self.topLevelFormula            = []
         self.numberOfIntegrators        = numberOfIntegrators
 
+
     # ***************************************************************************************************
     # ***************************************************************************************************
     #
@@ -86,12 +83,8 @@ class MultiRobotMotionPlanner:
     #
     # ***************************************************************************************************
     # ***************************************************************************************************
-
-
-
     def solve(self, robotsInitialState, robotsGoalState, inputConstraints, Ts,
               safetyLimit, dwell):
-
 
         numberOfSafetyConstraints = 0
         for robotIndex in range(0, self.numberOfRobots):
@@ -152,8 +145,7 @@ class MultiRobotMotionPlanner:
             solver.addBoolConstraint(SMConvexSolver.OR(*constraint))
         '''
 
-
-        stateTraj, booleanTraj, convIFModel           = solver.solve()
+        stateTraj, booleanTraj, convIFModel = solver.solve()
         counter_examples = solver.counterExamples
 
         '''
@@ -209,6 +201,7 @@ class MultiRobotMotionPlanner:
             loopIndex           = -1
         return robotsTraj, loopIndex, counter_examples
 
+
     # ***************************************************************************************************
     # ***************************************************************************************************
     #
@@ -216,7 +209,6 @@ class MultiRobotMotionPlanner:
     #
     # ***************************************************************************************************
     # ***************************************************************************************************
-
     def __createsRobotDataStructure(self, numberOfRobots, dwell, horizon, numberOfStates, numberOfInputs, workspace):
         robots                          = []
         robotStateShiftIndex            = 0
@@ -301,12 +293,7 @@ class MultiRobotMotionPlanner:
 
 
         #robots[robotIndex][horizonIndex]['stateIndex'][dwellIndex]
-
-
-        #for robot in robots:
-        #    print robot
         return robots, convexIFShiftIndex
-
 
 
     # ***************************************************************************************************
@@ -316,7 +303,6 @@ class MultiRobotMotionPlanner:
     #
     # ***************************************************************************************************
     # ***************************************************************************************************
-
     def __addInitialStateConstraints(self, solver, numberOfRobots, robots, robotsInitialState):
         for robotIndex in range(0, numberOfRobots):
             initialStateConstraint = SMConvexSolver.LPClause(np.array([[1.0]]), [robotsInitialState[robotIndex]['x0']],
@@ -338,8 +324,8 @@ class MultiRobotMotionPlanner:
             # region constraint
             initialRegion = robotsInitialState[robotIndex]['region']
             solver.addBoolConstraint(
-                solver.convIFClauses[robots[robotIndex][0]['regionsConstriantIndex'][initialRegion]]
-            )
+                solver.convIFClauses[robots[robotIndex][0]['regionsConstriantIndex'][initialRegion]])
+
 
     # ***************************************************************************************************
     # ***************************************************************************************************
@@ -348,7 +334,6 @@ class MultiRobotMotionPlanner:
     #
     # ***************************************************************************************************
     # ***************************************************************************************************
-
     def __addGoalStateConstraints(self, solver, numberOfRobots, robots, robotsGoalState):
         for robotIndex in range(0, numberOfRobots):
             goalStateConstraint = SMConvexSolver.LPClause(np.array([[1.0]]), [robotsGoalState[robotIndex]['xf']],
@@ -374,6 +359,7 @@ class MultiRobotMotionPlanner:
                 solver.convIFClauses[robots[robotIndex][-1]['regionsConstriantIndex'][goalRegion]]
             )
 
+
     # ***************************************************************************************************
     # ***************************************************************************************************
     #
@@ -381,7 +367,6 @@ class MultiRobotMotionPlanner:
     #
     # ***************************************************************************************************
     # ***************************************************************************************************
-
     def __addWorkspaceConstraints(self, solver, numberOfRobots, robots, dwell, horizon, workspace):
         # if no regions are specified, then put only workspace constraints
         if not workspace['regions']:
@@ -449,29 +434,30 @@ class MultiRobotMotionPlanner:
                         if regions[regionIndex]['isObstacle']:
                             solver.addBoolConstraint(SMConvexSolver.NOT(solver.convIFClauses[regionsCosntraintsIndex]))
 
-                        # Rule #2: You can move only through adjcaent regions:
-                        # unroll the state machine representing the workspace adjacency
-                        # For the $i$ th partition, generate the follwoing clause
-                        # P_{i,k} => P_{adj1,k+1} OR P_{adj2,k+1} OR ... P_{adjn,k+1}
+                        """
+                        Rule #2: You can move only through adjcaent regions:
+                        unroll the state machine representing the workspace adjacency.
+                           
+                        For the $i$ th partition, generate the follwoing clause
+                        P_{i,k} => P_{adj1,k+1} OR P_{adj2,k+1} OR ... P_{adjn,k+1}
+                        """
                         if horizonIndex < horizon - 1:
                             adjacents                   = regions[regionIndex]['adjacents']
                             nextRegionsCosntraintsIndex = [robots[robotIndex][horizonIndex + 1]['regionsConstriantIndex'][i] for i in adjacents]
                             antecedent                  = solver.convIFClauses[regionsCosntraintsIndex]
                             consequent                  = [solver.convIFClauses[i] for i in nextRegionsCosntraintsIndex]
                             solver.addBoolConstraint(
-                                SMConvexSolver.IMPLIES(antecedent, SMConvexSolver.OR(*consequent)
-                                        # the * used to unpack the python list to arguments
-                                        )
-                                )
+                                SMConvexSolver.IMPLIES(antecedent, SMConvexSolver.OR(*consequent)))
 
-                    # ---------- ONLY ONE REGION AT A TIME ----------------------------------------------------------------
-                    # for the $k$th time step , generate clause ensuring that only one partition is active
-                    # P_{1,k} + P_{2,k} + P_{p,k} = 1
-                    # where $p$ = number of partitions
+                    
+                    """
+                    # ONLY ONE REGION AT A TIME #
+                      for the $k$th time step , generate clause ensuring that only one partition is active
+                      P_{1,k} + P_{2,k} + P_{p,k} = 1
+                      where $p$ = number of partitions
+                    """
                     solver.addBoolConstraint(
                         sum([SMConvexSolver.BoolVar2Int(solver.convIFClauses[i]) for i in robots[robotIndex][horizonIndex]['regionsConstriantIndex']]) == 1)
-
-
 
 
     # ***************************************************************************************************
@@ -481,7 +467,6 @@ class MultiRobotMotionPlanner:
     #
     # ***************************************************************************************************
     # ***************************************************************************************************
-
     def __addInputConstraints(self, solver, numberOfRobots, robots, dwell, horizon, inputConstraints):
 
         # To minimize over L1 norm of inputs, we minimize over the auxiliary variables and bound the input from above
@@ -545,6 +530,7 @@ class MultiRobotMotionPlanner:
                                                               sense="G")
                     solver.addConvConstraint(inputConstraint)
 
+
     # ***************************************************************************************************
     # ***************************************************************************************************
     #
@@ -552,7 +538,6 @@ class MultiRobotMotionPlanner:
     #
     # ***************************************************************************************************
     # ***************************************************************************************************
-
     def __addDynamicsConstraints(self, solver, numberOfRobots, robots, dwell, horizon, Ts):
         for robotIndex in range(0, numberOfRobots):
             for horizonIndex in range(0, horizon):
@@ -567,7 +552,6 @@ class MultiRobotMotionPlanner:
 
                     if horizonIndex == horizon -1 and dwellIndex == dwell -1:
                         break
-
 
 
                     integratorChainX = robots[robotIndex][horizonIndex]['stateIndex'][dwellIndex]['integratorChainX']
@@ -591,8 +575,6 @@ class MultiRobotMotionPlanner:
                         dynamicsConstraint = SMConvexSolver.LPClause(np.array([[1.0, -1.0, -1 * Ts]]), [0.0], vars,
                                                                  sense="E")
                         solver.addConvConstraint(dynamicsConstraint)
-
-
 
                         vars = [
                             solver.rVars[integratorChainYNext[integratorIndex]],
@@ -658,6 +640,7 @@ class MultiRobotMotionPlanner:
                     solver.addConvConstraint(dynamicsConstraint)
                     '''
 
+
     # ***************************************************************************************************
     # ***************************************************************************************************
     #
@@ -665,8 +648,6 @@ class MultiRobotMotionPlanner:
     #
     # ***************************************************************************************************
     # ***************************************************************************************************
-
-
     def __addSafetyConstraints(self, solver, numberOfRobots, robots, dwell, horizon, safetyLimit, workspace):
         for horizonIndex in range(0, horizon):
             for robotIndex in range(0, numberOfRobots):
@@ -781,12 +762,6 @@ class MultiRobotMotionPlanner:
                     solver.addBoolConstraint(SMConvexSolver.IMPLIES(antecedent, consequent))
 
 
-
-
-
-
-
-
     # ***************************************************************************************************
     # ***************************************************************************************************
     #
@@ -794,7 +769,6 @@ class MultiRobotMotionPlanner:
     #
     # ***************************************************************************************************
     # ***************************************************************************************************
-
     def __LTLParser(self, solver, robots):
         # get the top level formula
         for formula in self.LTL:
@@ -824,7 +798,6 @@ class MultiRobotMotionPlanner:
                     self.__generateCompoundRELEASEBooleanConstraints(solver, formula, topLevelFormula)
 
 
-
     # ***************************************************************************************************
     # ***************************************************************************************************
     #
@@ -832,7 +805,6 @@ class MultiRobotMotionPlanner:
     #
     # ***************************************************************************************************
     # ***************************************************************************************************
-
     def __generateLTLBooleanConstraints(self, solver, formula, robots):
         prop1 = self.LTL[formula['argument1']]
 
@@ -943,14 +915,11 @@ class MultiRobotMotionPlanner:
     #
     # ***************************************************************************************************
     # ***************************************************************************************************
-
     def __generateAtomicBooleanConstraints(self, solver, formula, topLevelFormula, robots):
         robotsIndex         = formula['robots']
         sense               = formula['sense']
         rhs                 = formula['rhs']
         regionIndex         = formula['region']
-
-
 
         for horizonCounter in range(0, self.horizon):
             ifVars    = [robots[j][horizonCounter]['regionsConstriantIndex'][regionIndex] for j in robotsIndex]
@@ -992,6 +961,7 @@ class MultiRobotMotionPlanner:
                 )
             )
 
+
     # ***************************************************************************************************
     # ***************************************************************************************************
     #
@@ -999,7 +969,6 @@ class MultiRobotMotionPlanner:
     #
     # ***************************************************************************************************
     # ***************************************************************************************************
-
     def __generateCompoundANDBooleanConstraints(self, solver, formula, topLevelFormula):
         prop1 = self.LTL[formula['argument1']]
         prop2 = self.LTL[formula['argument2']]
@@ -1031,6 +1000,7 @@ class MultiRobotMotionPlanner:
                 )
             )
 
+
     # ***************************************************************************************************
     # ***************************************************************************************************
     #
@@ -1038,7 +1008,6 @@ class MultiRobotMotionPlanner:
     #
     # ***************************************************************************************************
     # ***************************************************************************************************
-
     def __generateCompoundORBooleanConstraints(self, solver, formula, topLevelFormula):
         prop1 = self.LTL[formula['argument1']]
         prop2 = self.LTL[formula['argument2']]
@@ -1070,6 +1039,7 @@ class MultiRobotMotionPlanner:
                 )
             )
 
+
     # ***************************************************************************************************
     # ***************************************************************************************************
     #
@@ -1077,7 +1047,6 @@ class MultiRobotMotionPlanner:
     #
     # ***************************************************************************************************
     # ***************************************************************************************************
-
     def __generateCompoundNOTBooleanConstraints(self, solver, formula, topLevelFormula):
         prop1 = self.LTL[formula['argument1']]
 
@@ -1104,6 +1073,8 @@ class MultiRobotMotionPlanner:
                     )
                 )
             )
+
+
     # ***************************************************************************************************
     # ***************************************************************************************************
     #
@@ -1111,7 +1082,6 @@ class MultiRobotMotionPlanner:
     #
     # ***************************************************************************************************
     # ***************************************************************************************************
-
     def __generateCompoundRELEASEBooleanConstraints(self, solver, formula, topLevelFormula):
         prop1 = self.LTL[formula['argument1']]
         prop2 = self.LTL[formula['argument2']]
@@ -1202,6 +1172,7 @@ class MultiRobotMotionPlanner:
                 )
             )
 
+
     # ***************************************************************************************************
     # ***************************************************************************************************
     #
@@ -1209,7 +1180,6 @@ class MultiRobotMotionPlanner:
     #
     # ***************************************************************************************************
     # ***************************************************************************************************
-
     def __generateCompoundGLOBALLYBooleanConstraints(self, solver, formula, topLevelFormula):
         # G phi = false R phi
 
@@ -1300,6 +1270,7 @@ class MultiRobotMotionPlanner:
                     )
                 )
             )
+
 
     # ***************************************************************************************************
     # ***************************************************************************************************
@@ -1397,8 +1368,6 @@ class MultiRobotMotionPlanner:
                     )
                 )
             )
-
-
 
 
     # ***************************************************************************************************
@@ -1506,7 +1475,6 @@ class MultiRobotMotionPlanner:
     #
     # ***************************************************************************************************
     # ***************************************************************************************************
-
     def createAtomicProposition(self, region, robots, sense, rhs):
         proposition = {'type': 'atomic',
                  'robots': robots,
