@@ -173,8 +173,7 @@ def motionPlanning_test1():
 def motionPlanning_test2():
 	"""LTL motion planning testcase
 
-	Two robots travelling through a cross intersection. Check Wiki for
-	detailed explanation. 
+	Single robot moving in a complex environment. 
 
 	Arguments:
 		None
