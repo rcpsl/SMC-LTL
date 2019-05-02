@@ -276,18 +276,6 @@ def motionPlanning_test2():
 	# Add robot initial state ie. position
 	robotsInitialState      = []
 	robotsInitialState.append({'x0': 0.5, 'y0': 0.5, 'region':0})   # first robot starts at (2.5,0)
-	#robotsInitialState.append({'x0': 5.0, 'y0': 2.5})   # second robot starts at (0,2.5)
-	#robotsInitialState.append({'x0': 2.0, 'y0': 5.0})   # second robot starts at (0,2.5)
-	#robotsInitialState.append({'x0': 2.0, 'y0': 0.0})  # second robot starts at (0,2.5)
-
-
-	# Add robot goal state ie. position
-	robotsGoalState          = []
-	#robotsGoalState.append({'xf': 5.5, 'yf': 2.0, 'region': 21})      # first robot goal is (2.5, 5.0)
-	#robotsGoalState.append({'xf': 0.0, 'yf': 2.5})      # second robot goal is (2.5, 5.0)
-	#robotsGoalState.append({'xf': 2.0, 'yf': 0.0})  # second robot goal is (2.5, 5.0)
-	#robotsGoalState.append({'xf': 2.0, 'yf': 5.0})  # second robot goal is (2.5, 5.0)
-
 
 	inputConstraints = []
 	inputConstraints.append({'uxMax': inputLimit, 'uxMin': -1 * inputLimit,
@@ -299,27 +287,6 @@ def motionPlanning_test2():
 	inputConstraints.append({'uxMax': inputLimit, 'uxMin': -1 * inputLimit,
 	                         'uyMax': inputLimit, 'uyMin': -1 * inputLimit})  # input constraints for the second robot
 
-
-	'''
-	# compute best dwell time
-	maxFacet = 0
-	for counter in range(0, numberOfRegions):
-	    if obstacleRegions[counter] == False:
-	        length = regionCorners[counter]['xmax'] - regionCorners[counter]['xmin']
-	        if maxFacet < length:
-	            maxFacet = length
-
-	        width = regionCorners[counter]['ymax'] - regionCorners[counter]['ymin']
-	        if maxFacet < width:
-	            maxFacet = width
-
-
-	dwell = int(0.1*maxFacet/(Ts * inputLimit))
-	if dwell == 0:
-	    dwell = 1
-
-	print "dwell = ", dwell
-	'''
 	start = timeit.default_timer()
 	for horizon in range(30, maxHorizon):
 	    print '\n=============================================='
@@ -327,13 +294,10 @@ def motionPlanning_test2():
 	    print '==============================================\n'
 	    solver = MultiRobotMotionPlanner(horizon, numberOfRobots, workspace, numberOfIntegrators)
 
-
-	    # At least one robot out of robots (0,1,2,3) to be at region 1
-	    # r0 + r1 + r2 + r3 \ge 1
+		# Robot 0 has to be at region 21, 3, 25 eventually in any order	   
 	    prop1 = solver.createAtomicProposition(21, [0], 'E', 1)
 	    prop2 = solver.createAtomicProposition(3, [0], 'E', 1)
 	    prop3 = solver.createAtomicProposition(25, [0], 'E', 1)
-
 
 	    # Eventuality:
 	    Eprop1 = solver.createCompoundProposition(prop1, [], 'E')
@@ -346,24 +310,8 @@ def motionPlanning_test2():
 
 	    solver.createLTLFormula(Eprop1AndEprop2ANDEprop3)
 
-
-	    '''
-	    # NOT prop1
-	    NOTprop1 = solver.createCompoundProposition(prop1, [], 'NOT')
-
-	    # Eventually (NOT prop1)
-	    ENOTprop1 = solver.createCompoundProposition(NOTprop1, [], 'E')
-
-	    # Globally Eventually (NOT prop1)
-	    GENOTprop1 = solver.createCompoundProposition(ENOTprop1, [], 'G')
-
-	    # Globally Eventually (prop1 AND prop2) AND Globally Eventually (NOT prop1)
-	    GEprop1Andprop2ANDGENOTprop1 = solver.createCompoundProposition(GEprop1Andprop2, GENOTprop1, 'AND')
-	    solver.createLTLFormula(GEprop1Andprop2ANDGENOTprop1)
-	    '''
-
 	    robotsTrajectory, loopIndex, counter_examples = solver.solve(
-	        robotsInitialState, robotsGoalState, inputConstraints, Ts, safetyLimit, dwell
+	        robotsInitialState, [], inputConstraints, Ts, safetyLimit, dwell
 	    )
 
 	    if robotsTrajectory:
@@ -378,7 +326,6 @@ def motionPlanning_test2():
 
 	__animateTrajectories(robotsTrajectory, loopIndex, safetyLimit, workspace)
 
-	# [0, 0, 0, 0, 1, 5, 8, 7, 7, 6, 16, 19, 21, 21, 21]
 
 
 def __animateTrajectories(robotsTrajectory, loopIndex, safetyLimit, workspace):
