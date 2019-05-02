@@ -268,12 +268,6 @@ def motionPlanning_test2():
 	inputConstraints = []
 	inputConstraints.append({'uxMax': inputLimit, 'uxMin': -1 * inputLimit,
 	                         'uyMax': inputLimit, 'uyMin': -1 * inputLimit})  # input constraints for the first robot
-	inputConstraints.append({'uxMax': inputLimit, 'uxMin': -1 * inputLimit,
-	                         'uyMax': inputLimit, 'uyMin': -1 * inputLimit})  # input constraints for the second robot
-	inputConstraints.append({'uxMax': inputLimit, 'uxMin': -1 * inputLimit,
-	                         'uyMax': inputLimit, 'uyMin': -1 * inputLimit})  # input constraints for the second robot
-	inputConstraints.append({'uxMax': inputLimit, 'uxMin': -1 * inputLimit,
-	                         'uyMax': inputLimit, 'uyMin': -1 * inputLimit})  # input constraints for the second robot
 
 	start = timeit.default_timer()
 	for horizon in range(30, maxHorizon):
