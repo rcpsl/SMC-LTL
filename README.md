@@ -1,6 +1,6 @@
-<h1 align="center"> SMC-LTL: SMC-Based LTL MultiRobot Motion Planner</h1>
+<h1 align="center"> SMC-LTL: SMC-based LTL Multi-Robot Motion Planner</h1>
 
-Satisfiaibility Modulo Convex Programming (SMC)-Based Linear Temporal Logic (LTL) MultiRobot Motion Planner.
+Satisﬁability Modulo Convex programming (SMC)-based Linear Temporal Logic (LTL) Multi-Robot Motion Planner.
 
 See [Wiki](https://github.com/rcpsl/SMC-LTL/wiki) for instructions and the following papers for technical details:
 
