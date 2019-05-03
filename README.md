@@ -1,6 +1,9 @@
-<h1 align="center"> Multi Robot Motion Planner</h1>
+<h1 align="center"> SMC-LTL: SMC-Based LTL MultiRobot Motion Planner</h1>
 
-Multi-robot motion planner from Linear Temporal Logic specifications.
+SMC-Based LTL MultiRobot Motion Planner.
 
-See [Wiki](https://github.com/rcpsl/Multirobot-Motion-Planner/wiki) for instructions. 
+See [Wiki](https://github.com/rcpsl/SMC-LTL/wiki) for instructions. 
 
+## License
+
+The code is released under MIT License. 
