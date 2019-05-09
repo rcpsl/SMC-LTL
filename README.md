@@ -12,6 +12,7 @@ See [Wiki](https://github.com/rcpsl/SMC-LTL/wiki) for instructions and the follo
 
 Simulations and experiments showing the performance of the SMC-LTL motion planner can be found here:
 https://www.youtube.com/watch?v=4vybbqXsPaM
+
 https://www.youtube.com/watch?v=7_EitCuJWCE
 
 ## License
