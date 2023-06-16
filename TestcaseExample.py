@@ -131,9 +131,9 @@ def motionPlanning_test1():
 
 	start                   = timeit.default_timer()
 	for horizon in range(3,maxHorizon):
-	    print '\n=============================================='
-	    print '         Horizon = ', horizon
-	    print '==============================================\n'
+	    print('\n==============================================')
+	    print ('         Horizon = ', horizon)
+	    print ('==============================================\n')
 	    solver = MultiRobotMotionPlanner(horizon, numberOfRobots, workspace, numberOfIntegrators)
 	    robotsTrajectory, loopIndex, counter_examples = solver.solve(
 	        robotsInitialState, robotsGoalState, inputConstraints, Ts, safetyLimit, dwell)
@@ -144,11 +144,10 @@ def motionPlanning_test1():
 
 	end = timeit.default_timer()
 	time_smt = end - start
-	print 'Exuection time = ', time_smt
-	print 'Number of Robots = ', numberOfRobots
-	print 'Safety Limit = ', safetyLimit
-	print 'Trajectory length = ', len(robotsTrajectory[0]['x'])
-
+	print ('Exuection time = ', time_smt)
+	print ('Number of Robots = ', numberOfRobots)
+	print ('Safety Limit = ', safetyLimit)
+	print ('Trajectory length = ', len(robotsTrajectory[0]['x']))
 	__animateTrajectories(robotsTrajectory, loopIndex, safetyLimit, workspace)
 
 
@@ -271,9 +270,9 @@ def motionPlanning_test2():
 
 	start = timeit.default_timer()
 	for horizon in range(30, maxHorizon):
-	    print '\n=============================================='
-	    print '         Horizon = ', horizon
-	    print '==============================================\n'
+	    print ('\n==============================================')
+	    print ('         Horizon = ', horizon)
+	    print ('==============================================\n')
 	    solver = MultiRobotMotionPlanner(horizon, numberOfRobots, workspace, numberOfIntegrators)
 
 		# Robot 0 has to be at region 21, 3, 25 eventually in any order	   
@@ -301,10 +300,10 @@ def motionPlanning_test2():
 
 	end                     = timeit.default_timer()
 	time_smt                = end - start
-	print 'Exuection time = ', time_smt
-	print 'Number of Robots = ', numberOfRobots
-	print 'Safety Limit = ', safetyLimit
-	print 'Trajectory length = ', len(robotsTrajectory[0]['x'])
+	print ('Exuection time = ', time_smt)
+	print ('Number of Robots = ', numberOfRobots)
+	print ('Safety Limit = ', safetyLimit)
+	print ('Trajectory length = ', len(robotsTrajectory[0]['x']))
 
 	__animateTrajectories(robotsTrajectory, loopIndex, safetyLimit, workspace)
 

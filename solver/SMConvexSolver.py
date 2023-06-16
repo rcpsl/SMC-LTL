@@ -255,7 +255,7 @@ class SMConvexSolver:
         while solutionFound == False and iterationsCounter < self.maxNumberOfIterations:
             iterationsCounter               = iterationsCounter + 1
             if self.verbose == 'ON':
-                print '******** SMConv Solver, iteration = ', iterationsCounter, '********'
+                print ('******** SMConv Solver, iteration = ', iterationsCounter, '********')
 
             if self.profiling == 'true':
                 start = timeit.default_timer()
@@ -265,7 +265,7 @@ class SMConvexSolver:
                 print('SAT time', end-start)
         # ------------ Call SAT solver -------------------------------------------------
             if  SATcheck == z3.unsat:
-                print '========== ERROR: Problem is UNSAT =========='
+                print ('========== ERROR: Problem is UNSAT ==========')
                 return list(), list(), list()
             else:
         # ------------ Extract Boolean Models ------------------------------------------
@@ -288,14 +288,14 @@ class SMConvexSolver:
                 
                 #print('stat ', convStatus, constrainedConvSolver.solution.get_status_string())
                 if convSolnFound == -1 :
-                    print '========== ERROR: Problem is INFEASIBLE =========='
+                    print( '========== ERROR: Problem is INFEASIBLE ==========')
                     return list(), list(), list()
                             
                 if convSolnFound == 1 :
                     rVarsModel          = constrainedConvSolver.solution.get_values(self.rVars)
                     solutionFound       = 1
                     if self.verbose == 'ON':
-                        print '========== Solution Found ========='
+                        print ('========== Solution Found =========')
                     return rVarsModel, bModel, convIFModel
                 else:
         # ------------ Find counterexample----------------------------------------------
@@ -303,7 +303,7 @@ class SMConvexSolver:
                         start = timeit.default_timer()
                     counterExamples         = self.__generateCounterExample(constrainedConvSolver, convIFModel)
                     if not counterExamples: # no counter example can be found .. something is wrong
-                        print '========== ERROR: Problem is UNSAT =========='
+                        print ('========== ERROR: Problem is UNSAT ==========')
                         return list(), list(), list()
                     if self.profiling == 'true':
                         end = timeit.default_timer()
@@ -364,11 +364,11 @@ class SMConvexSolver:
         if self.counterExampleStrategy == 'PREFIX':
             activeIFClauses                 = [i for i, x in enumerate(convIFModel) if x == True]
 
-            print 'activeIFClauses = ', activeIFClauses
+            print ('activeIFClauses = ', activeIFClauses)
             ii = [i * 27 for i in range(0, len(activeIFClauses))]
-            print [x - y for x, y in zip(activeIFClauses, ii)]
+            print ([x - y for x, y in zip(activeIFClauses, ii)])
 
-            print 'activeIFClauses = ', activeIFClauses
+            print ('activeIFClauses = ', activeIFClauses)
             #for activeIfClausecounter in range(1, len(activeIFClauses)):
             pastSlackIndecies                      = list()
             for activeIfClause in activeIFClauses:
@@ -412,7 +412,7 @@ class SMConvexSolver:
             #constrainedConvSolver.feasopt(constrainedConvSolver.feasopt.upper_bound_constraints())
             constrainedConvSolver.solve()
             if self.verbose == 'ON':
-                print 'SMC status = ', constrainedConvSolver.solution.get_status(), constrainedConvSolver.solution.get_status_string()
+                print ('SMC status = ', constrainedConvSolver.solution.get_status(), constrainedConvSolver.solution.get_status_string())
             
             slackVarsModel                      =   np.array(constrainedConvSolver.solution.get_values(self.__slackIFVarsBound))
             #problemIFClauses                    =   [i for i, x in enumerate(slackVarsModel) if x > self.slackTolerance]
@@ -441,7 +441,7 @@ class SMConvexSolver:
         elif self.counterExampleStrategy == 'IIS':
             constrainedConvSolver.solve()
             if self.verbose == 'ON':
-                print 'IIS status = ', constrainedConvSolver.solution.get_status(), constrainedConvSolver.solution.get_status_string()
+                print ('IIS status = ', constrainedConvSolver.solution.get_status(), constrainedConvSolver.solution.get_status_string())
             
             #print constrainedConvSolver.variables.get_upper_bounds(self.__slackIFVarsBound)
             #print constrainedConvSolver.linear_constraints.get_rhs()
@@ -464,7 +464,7 @@ class SMConvexSolver:
         elif self.counterExampleStrategy == 'PREFIX':
             constrainedConvSolver.solve()
             if self.verbose == 'ON':
-                print 'PREFIX status = ', constrainedConvSolver.solution.get_status(), constrainedConvSolver.solution.get_status_string()
+                print ('PREFIX status = ', constrainedConvSolver.solution.get_status(), constrainedConvSolver.solution.get_status_string())
             
             #constrainedConvSolver.conflict.refine(constrainedConvSolver.conflict.upper_bound_constraints(1.0, self.__slackIFVars))
             #conflictMembers          = constrainedConvSolver.conflict.get()
@@ -474,7 +474,7 @@ class SMConvexSolver:
             activeIFClauses                     = [i for i, x in enumerate(convIFModel) if x == True]
             slackVarsModel                      = np.array(constrainedConvSolver.solution.get_values(self.__slackIFVarsBound))
             activeSlackVarsModel                = [slackVarsModel[i] for i in activeIFClauses]
-            print 'activeSlackVarsModel', activeSlackVarsModel
+            print ('activeSlackVarsModel', activeSlackVarsModel)
             problemIFClauses                    = [i for i, x in enumerate(activeSlackVarsModel) if x > self.slackTolerance]
 
             #print 'slackVarsModel = ', slackVarsModel, 'problemIFClauses = ', problemIFClauses, 'sum = ', sum(slackVarsModel), 'self.slackTolerance', self.slackTolerance
@@ -487,12 +487,12 @@ class SMConvexSolver:
                 #slackVarsModelList                      = slackVarsModel.tolist()
             
                 convIFModelIndex                        = [i for i, x in enumerate(convIFModel) if x == True]
-                print convIFModelIndex, problemIFClauses
+                print( convIFModelIndex, problemIFClauses)
                 #indexOfFirstNonZeroSlack                = convIFModelIndex.index(problemIFClauses[0])
                 counterExample                          = [activeIFClauses[i] for i in range(0, problemIFClauses[0]+1)]
                 #counterExample                          = [convIFModelIndex[i] for i in range(indexOfFirstNonZeroSlack,indexOfFirstNonZeroSlack+1)]
                 #print "indexOfFirstNonZeroSlack", indexOfFirstNonZeroSlack, convIFModelIndex[0:indexOfFirstNonZeroSlack]
-                print counterExample
+                print (counterExample)
                 self.counterExamples.append(counterExample)
                 #print "solve = ", self.counterExamples, indexOfFirstNonZeroSlack
             
@@ -513,7 +513,7 @@ class SMConvexSolver:
     def __generateCounterExample(self, constrainedConvSolver, convIFModel):
         counterExamples                         = list()
         if self.verbose == 'ON':
-            print '********* Generating Counterexample *********'
+            print ('********* Generating Counterexample *********')
         if self.counterExampleStrategy == 'SMC':
             inactiveIFClauses                   = [i for i, x in enumerate(convIFModel) if x != True]
             slackVarsModel                      = np.array(constrainedConvSolver.solution.get_values(self.__slackIFVarsBound))

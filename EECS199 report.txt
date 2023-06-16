@@ -1,0 +1,11 @@
+Summary of EECS199 for this quarter: 
+1. Configure Q ground control with the clover drone, establish ssh communication between the drone raspberry Pi and our computer under the lab wifi.
+2. Manually fly the drone under the supervision of Ulices, and detect the firmware issue: the latest firmware is not compatible with the original flight module. (Missing velocity and y-position reading)
+3. Tested 20+ different published firmware version and finally found one firmware that is able to read the velocity and positional information on QGround.
+4. Encounter low battery issue. While fixing it with a multimeter, we found that the both battery cannot be charged or read correctly, because the reader will always show good battery and the multimeter indicates that both battery cannot be charged. We confirmed that the charing wire connection on the battery is bad and requested replacement on week7. 
+5. Shift to SMC motion planner.  Download the CPLEX optimizer and go over the GitHub repository and learn how to write a reach and avoid test case
+6. Rewrite all the SMC-LTL python 2 files to fit in Python 3 style and successful get the output motion planning video demonstration solution from running the TestcaseExample.py
+7.To better avoid collision in real time, design a fine-tuned CNN model based on VGG16 to train on Kaggle drone dataset. Precisely detect the drone’s location in an image within 95% accuracy and 0.01 validation loss. Also build a Vision Transformer based on ViT-b16 to obtain a 40% validation loss improvement compared to the best CNN model. 
+
+
+
