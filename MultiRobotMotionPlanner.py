@@ -62,7 +62,7 @@ class MultiRobotMotionPlanner:
     #       Constructor
     # ========================================================
     def __init__(self, horizon, numberOfRobots, workspace, numberOfIntegrators):
-        print ''
+        print ('')
         self.horizon                    = horizon
         self.numberOfLTLBoolVars        = 0
         self.LTL                        = []
@@ -133,7 +133,7 @@ class MultiRobotMotionPlanner:
 
         end = timeit.default_timer()
 
-        print 'Feeding constraints time = ', end - start, start2 - start, start3 - start2, start4 - start3, start5 - start4, end - start5
+        print ('Feeding constraints time = ', end - start, start2 - start, start3 - start2, start4 - start3, start5 - start4, end - start5)
 
         '''
         # Add previous Counter Examples
@@ -158,7 +158,7 @@ class MultiRobotMotionPlanner:
                         break
             print ceStr
 
-        print 'counterExamples', counter_examples
+        print ('counterExamples', counter_examples)
         '''
 
         activeIFClauses = [i for i, x in enumerate(convIFModel) if x == True]
@@ -182,12 +182,12 @@ class MultiRobotMotionPlanner:
                     uyTraj.append(stateTraj[robots[robotIndex][horizonIndex]['stateIndex'][dwellIndex]['uy']])
             trajectory                  = {'x': xTraj, 'y': yTraj, 'ux': uxTraj, 'uy': uyTraj}
             robotsTraj.append(trajectory)
-            print '\n======== Trajectory for Robot #', robotIndex, ' =================='
-            print xTraj
-            print yTraj
-            print uxTraj
-            print uyTraj
-            print 'RegionTraj', regionTraj
+            print( '\n======== Trajectory for Robot #', robotIndex, ' ==================')
+            print (xTraj)
+            print (yTraj)
+            print (uxTraj)
+            print (uyTraj)
+            print ('RegionTraj', regionTraj)
 
 
 
@@ -243,7 +243,8 @@ class MultiRobotMotionPlanner:
                     #indexXDot                       = 6 + robotStateShiftIndex
                     #indexYDot                       = 7 + robotStateShiftIndex
 
-                    states                          = [indexX, indexY] + derivativesX + derivativesY
+                    
+                    states = [indexX, indexY] + list(derivativesX) + list(derivativesY)
 
                     #print states
 
@@ -257,9 +258,9 @@ class MultiRobotMotionPlanner:
                                                         'y': indexY,
                                                         #'vy': indexYDot,
                                                         'states': states,
-                                                        'derivatives': derivativesX + derivativesY,
-                                                        'integratorChainX': [indexX] + derivativesX,
-                                                        'integratorChainY': [indexY] + derivativesY
+                                                        'derivatives': list(derivativesX) + list(derivativesY),
+                                                        'integratorChainX': [indexX] + list(derivativesX),
+                                                        'integratorChainY': [indexY] + list(derivativesY)
                                                     }
                     robotStateShiftIndex = robotStateShiftIndex + (numberOfStates + 2 * numberOfInputs)
                     statesVarIndex.append(indecies)
@@ -1527,7 +1528,7 @@ class MultiRobotMotionPlanner:
 
         # ----------------------------------------------------------------------
         elif operator == 'UNTIL':      # Until
-            print 'U'
+            print( 'U')
 
 
 
